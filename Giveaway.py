@@ -2,6 +2,7 @@
 TODO:
 - Add multithreading
 - Add GUI
+- Standartize code (remove global variables and other bad practices)
 """ 
 
 import requests, json, time
@@ -18,6 +19,7 @@ def token_check(token):
     user = requests.get(baseurl + '/users/@me', headers={"Authorization":token})
     if user.status_code == 200:
         user = json.loads(user.text)['username']
+        print('----------------------')
         print('Logged in with user ' + user)
     elif user.status_code == 401:
         print('Wrong code.')
@@ -28,21 +30,26 @@ token_input()
 
 start = time.time()
 servers = json.loads(requests.get(baseurl + '/users/@me/guilds', headers={"Authorization":token}).text) #Getting list of joined servers
+
 print('Number of servers: ' + str(len(servers)))
+print('----------------------')
 print()
+
 for x in range(len(servers)):
     serverid = servers[x]['id']
     servername = servers[x]['name']
     channels = json.loads(requests.get(baseurl + '/guilds/' + serverid + '/channels', headers={"Authorization":token}).text) #Getting list of channels in server
     print('Starting with: ' + servername)
     for y in range(len(channels)):
+        if channels[y]['type'] != 0: #Checking if it is a text-channel
+            continue
         channelid = channels[y]['id']
-        messages = json.loads(requests.get(baseurl + '/channels/' + channelid + '/messages?limit=' + str(limit), headers={"Authorization":token}).text) #Getting messages in channel
-        for i in range(len(messages)): 
-            try: #try-catch to fix an exception (e.g. not enough messages)
-                message = messages[i]
-            except:
-                pass
+        response = requests.get(baseurl + '/channels/' + channelid + '/messages?limit=' + str(limit), headers={"Authorization":token})
+        messages = json.loads(response.text) #Getting messages in channel
+        if response.status_code != 200: #Checking if we have access to channel
+            continue
+        for i in range(len(messages)):
+            message = messages[i]
             try:
                 content = message['content']
                 bot = message['author']['bot']

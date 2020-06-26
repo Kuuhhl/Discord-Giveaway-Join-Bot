@@ -1,10 +1,10 @@
-""" 
+"""
 TODO:
 - Add GUI
 - Improve code readability and efficiency
 - Improve time prediction
 """ 
-import requests, json, concurrent.futures, functools, time
+import requests, json, concurrent.futures, functools, time, configparser
 
 limit = 100 #Number of messages to scan in the channel. MAX: 100
 baseurl = ("https://discord.com/api/v6")
@@ -45,7 +45,18 @@ def reaction(channelid, msgid, reactions, participated, token):
         return 'Reacted to giveaway!'
     return 'Not reacted.'
 def init():
-    token = input("Input authentification token here: ")
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    try:
+        token = config['DEFAULT']['token']
+    except KeyError:
+        config['DEFAULT']['token'] = input("Input authentification token here: ").strip()
+        with open('config.ini', 'w') as configfile:
+            config.write(configfile)
+    token = config['DEFAULT']['token']
+    print()
+    print('Read token from file: ' + token)
+    print()
     user = requests.get(baseurl + '/users/@me', headers={"Authorization":token})
     if user.status_code == 200:
         user = json.loads(user.text)['username']
@@ -64,6 +75,7 @@ def init():
         print('All servers completed!')
         print('Time taken: ' + str(int(time.time() - start)) + ' seconds.')
     elif user.status_code == 401:
+            open('config.ini', 'w').close() #clear config file
             print('Wrong token.')
             print()
             init()

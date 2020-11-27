@@ -1,5 +1,7 @@
 # Discord Giveaway Join Bot
 This bot will automatically look for giveaways and join them.
+## Disclaimer
+This script is currently outdated because it sends too many requests at once. Until it's updated, please refer to alternatives.
 # Dependencies
 - Python 3.6+
 - internet-connection

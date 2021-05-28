@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import requests, configparser, asyncio, aiohttp, tqdm, itertools
 
 limit = 100  # Number of messages to scan in the channel. MAX: 100
@@ -158,7 +159,7 @@ def init():
     print()
 
     with requests.get(
-        baseurl + "/users/@me", headers={"Authorization": token}
+        baseurl + "/users/@me", headers={"Authorization": auth_token}
     ) as response:
         response = response
 

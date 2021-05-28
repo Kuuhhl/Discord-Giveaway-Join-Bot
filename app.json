@@ -2,5 +2,6 @@
   "name": "Discord Giveaway Bot",
   "description": "This bot will automatically look for giveaways and join them. It is useful if you don't want to look through your servers every time just to catch the giveaways.",
   "repository": "https://github.com/Kuuhhl/Discord-Giveaway-Join-Bot",
-  "keywords": ["discord", "giveaway"]
+  "keywords": ["discord", "giveaway"],
+  "buildpacks": [{"url": "heroku/python"}]
 }
